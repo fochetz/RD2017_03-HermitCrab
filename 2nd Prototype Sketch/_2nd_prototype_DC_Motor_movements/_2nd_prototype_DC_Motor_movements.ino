@@ -14,8 +14,8 @@ byte pos;
 byte angle=0;
 byte pin_ain1 = 9; //Direction
 byte pin_ain2 = 8; //Direction
-byte pin_bin1 = 12; //Direction
-byte pin_bin2 = 11; //Direction
+byte pin_bin1 = 11; //Direction
+byte pin_bin2 = 12; //Direction
 
 byte pin_pwma = 3; //Speed
 byte pin_pwmb = 5;
@@ -40,9 +40,12 @@ void setup() {
 }
 int delay_value=0;
 void loop() {
-
-   
-  
+  turn_left(200);
+  delay(2000);
+  turn_right(200);
+  delay(2000);
+  move_backward(200);
+  delay(2000);
 }
 
 void try_all_movement()

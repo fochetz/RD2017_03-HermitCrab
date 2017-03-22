@@ -8,7 +8,7 @@
 */
 
 #include <Servo.h>
-#define SERVOPIN 10
+#define SERVOPIN 6
 Servo shell;
 int pos;   // variable to store the servo position
 
@@ -20,12 +20,12 @@ void loop() {
   for (pos = 0; pos <= 180; pos += 1) 
   {
     shell.write(pos);
-    delay(10);
+    delay(1);
   }
   for (pos = 180; pos >= 0; pos -= 1) 
   {
     shell.write(pos);
-    delay(10);
+    delay(1);
    }
   delay(500);
 }
