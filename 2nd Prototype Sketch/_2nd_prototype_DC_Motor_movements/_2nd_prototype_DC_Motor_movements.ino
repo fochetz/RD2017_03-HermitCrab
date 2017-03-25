@@ -19,7 +19,7 @@ byte pin_bin2 = 12; //Direction
 
 byte pin_pwma = 3; //Speed
 byte pin_pwmb = 5;
-byte pin_stby = 10;
+byte pin_stby = 13;
 
 
 void setup() {
