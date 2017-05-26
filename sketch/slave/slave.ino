@@ -34,9 +34,10 @@
 #define BLACK_LINE_SPIN_INTERVAL 500    //time spent to spin in order to avoid the black line
 
 //IR communication
-#define IR_SENSE_INTERVAL 20000           //time frequence used to sense the infrareds
+#define IR_SENSE_INTERVAL 200           //time frequence used to sense the infrareds
 #define PEOPLE_PACKET 0xE0E0906F        //packet received everytime a person approaches
 #define NO_PEOPLE_PACKET 0xE0E0906A        //packet received everytime a person goes away
+#define PEOPLE_PRESENCE_TIME 10000
 
 //line following
 #define LINE_FOLLOWING_SET_POINT 500
@@ -94,6 +95,7 @@ decode_results results;
 
 
 unsigned long ir_sensing_timer;
+unsigned long ir_people_presence_timer;
 unsigned long now;
 unsigned long obstacle_timer;
 unsigned long region_timer;
@@ -161,42 +163,55 @@ void setup() {
 
 void loop() {
   now = millis();
-  /*
-    //*********************************************
-    // IR SENSING - start
-    //*********************************************
-    if (now - ir_sensing_timer > IR_SENSE_INTERVAL) {
-      Serial.println("Sense:");
-      ir_sensing_timer = now;
-      if (ir_recv.decode(&results)) {
-        Serial.println("PACKET:");
-        Serial.println(HEX, results.value);
-        if (results.value == PEOPLE_PACKET) {
-          if (state ==  MENU_WALKING){
-            previous_state = MENU_WALKING;
-            state = SCARING;
-          }
-          Serial.println("There's someone!");
+
+  //*********************************************
+  // IR SENSING - start
+  //*********************************************
+  if (now - ir_sensing_timer > IR_SENSE_INTERVAL) {
+    Serial.println("Sense:");
+    ir_sensing_timer = now;
+    if (ir_recv.decode(&results)) {
+      Serial.println("PACKET:");
+      Serial.println(HEX, results.value);
+      if (results.value == PEOPLE_PACKET) {
+        ir_people_presence_timer = millis();
+        if (state ==  MENU_WALKING) {
+          previous_state = MENU_WALKING;
+          state = SCARING;
         }
-        else if (results.value == NO_PEOPLE_PACKET) {
-          //No one wants to see the menu
-          Serial.println("No one...");
-          if (state == LINE_FOLLOWING){
-            previous_state = LINE_FOLLOWING;
-            state = MENU_REACHING;
-          }
+        Serial.println("There's someone!");
+      }
+      else if (results.value == NO_PEOPLE_PACKET) {
+        //No one wants to see the menu
+        ir_people_presence_timer = 0;
+        Serial.println("No one...");
+        if (state == LINE_FOLLOWING) {
+          previous_state = LINE_FOLLOWING;
+          state = MENU_REACHING;
         }
       }
-
-      //The resume allow the sensor to sense another time
-      ir_recv.resume();
     }
-    //*********************************************
-    // IR SENSING - end
-    //*********************************************
-  */
-  //SIMULATION OF PEOPLE (IR_SENSOR)
-  if (now - ir_sensing_timer > IR_SENSE_INTERVAL) {
+    else {
+      //No one wants to see the menu
+      if (millis() -  ir_people_presence_timer > PEOPLE_PRESENCE_TIME)
+      {
+        ir_people_presence_timer = 0;
+        Serial.println("No one...");
+        if (state == LINE_FOLLOWING) {
+          previous_state = LINE_FOLLOWING;
+          state = MENU_REACHING;
+        }
+      }
+    }
+    //The resume allow the sensor to sense another time
+    ir_recv.resume();
+  }
+  //*********************************************
+  // IR SENSING - end
+  //*********************************************
+  /*
+    //SIMULATION OF PEOPLE (IR_SENSOR)
+    if (now - ir_sensing_timer > IR_SENSE_INTERVAL) {
     ir_sensing_timer = now;
     if (there_is_someone) {
       there_is_someone = false;
@@ -206,24 +221,24 @@ void loop() {
       there_is_someone = true;
       Serial.println("THERE'S SOMEONE!");
     }
-  }
+    }
 
-  if (there_is_someone) {
+    if (there_is_someone) {
     if (state ==  MENU_WALKING) {
       previous_state = MENU_WALKING;
       state = SCARING;
     }
-  }
-  else {
+    }
+    else {
     if (state == LINE_FOLLOWING) {
       previous_state = LINE_FOLLOWING;
       state = MENU_REACHING;
     }
-  }
+    }
 
-  //Just for testing
-  //state = LINE_FOLLOWING;
-
+    //Just for testing
+    //state = LINE_FOLLOWING;
+  */
 
   //the state of the robot must be modified only in this switch
   switch (state) {
@@ -237,12 +252,12 @@ void loop() {
           Serial.print("START TO COUNT - STEP #");
           Serial.println(steps_on_menu);
         }
-      }else{
-          //init the menu reaching variables
-          start_to_count = true;
-          steps_on_menu = 0;
+      } else {
+        //init the menu reaching variables
+        start_to_count = true;
+        steps_on_menu = 0;
       }
-      
+
       if (steps_on_menu == 3) {
         //reset the line reaching variables
         start_to_count = false;
@@ -607,21 +622,15 @@ void menu_walking() {
       start_to_count = false;
       steps_on_the_line = 0;
     }
-
     if (steps_on_the_line == 2) {
       movement = STRAIGHT;
       straight_direction = STRAIGHT_BACKWARD;
-
-
       //movement = SPIN;
       //spin_direction = random(0, 2);
-
       //reset the line reaching variables
       start_to_count = false;
       steps_on_the_line = 0;
-
     }
-
     //**********************************************************************************************************************************************
   */
   /*
