@@ -29,8 +29,8 @@
 //HOW MUCH TIME THE BUBBLE GUN WILL BE TRIGGERED
 #define TRIG_TIME 1000
 //TRIG / UNTRIG POSITION OF THE BUBBLE GUN'S SERVO
-#define UN_TRIG_POSITION 70
-#define TRIG_POSITION 180
+#define UN_TRIG_POSITION 180
+#define TRIG_POSITION 90
 /*---------------------------------------
  * END SERVO
  ----------------------------------------*/
@@ -187,6 +187,7 @@ void loop() {
     if (expired_timer(detach_bubble_gun_timer , DETACH_TIME))
     {
       trigger_bubble_gun.detach();
+      detach_bubble_gun_flag=false;
     }
   }
 }
@@ -344,7 +345,7 @@ void trig_bubble_gun()
 {
   trigger_bubble_gun.attach(BUBBLEGUN_SERVO_PIN);
   trigger_bubble_gun.write(TRIG_POSITION);
-  detach_bubble_gun_flag = true;
+  //detach_bubble_gun_flag = true;
   detach_bubble_gun_timer = millis();
 }
 
