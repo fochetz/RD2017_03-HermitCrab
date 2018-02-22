@@ -67,7 +67,8 @@
 
 #define MIN_VOLUME 15
 #define MAX_VOLUME 30
-
+#define DEFAULT_SONG 1
+#define PEOPLE_INVITATION 2
 
 int i = 0;
 //SONAR READ VALUE
@@ -126,7 +127,7 @@ void setup() {
   Serial.begin(115200);
   //mp3 set volume
   mp3_set_volume (dfplayer_volume);
-  mp3_play (1);
+  mp3_play (DEFAULT_SONG);
 
   //for test:
   //actual_state = PEOPLE_PRESENCE_STATE;
@@ -262,6 +263,7 @@ void people_seen_action()
       if (expired_timer(people_seen_timer, PEOPLE_SEEN_TIME))
       {
         send_no_people_flag = false;
+        mp3_play (PEOPLE_INVITATION);
         actual_state = PEOPLE_PRESENCE_STATE;        
         sending_people_timer = millis();
       }
@@ -290,6 +292,7 @@ void people_presence_action()
         case STRONGFALSE:
           send_no_people_flag = true;
           sending_no_people_timer = millis();
+          mp3_play (DEFAULT_SONG);
           actual_state = NO_PEOPLE_STATE;
           break;
     }
