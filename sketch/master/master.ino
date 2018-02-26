@@ -16,7 +16,7 @@
 //MAX DISTANCE IN cm TO PING
 #define MAX_DISTANCE 300
 //THRESHOLD(IN cm) TO DEFINE IF A PERSON IS CLOSE TO THE OYSTER
-#define PRESENCE_THRESHOLD 50
+#define PRESENCE_THRESHOLD 100
 /*-----------------------------------------
  * SERVO
  ------------------------------------------*/
