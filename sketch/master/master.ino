@@ -13,10 +13,11 @@
 //PIN SONAR 3
 #define TRIGGER_PIN3 12
 #define ECHO_PIN3 13
-//MAX DISTANCE IN cm TO PING
-#define MAX_DISTANCE 300
 //THRESHOLD(IN cm) TO DEFINE IF A PERSON IS CLOSE TO THE OYSTER
-#define PRESENCE_THRESHOLD 100
+#define PRESENCE_THRESHOLD 70
+//MAX DISTANCE IN cm TO PING
+#define MAX_DISTANCE 200
+
 /*-----------------------------------------
  * SERVO
  ------------------------------------------*/
@@ -29,8 +30,8 @@
 //HOW MUCH TIME THE BUBBLE GUN WILL BE TRIGGERED
 #define TRIG_TIME 1000
 //TRIG / UNTRIG POSITION OF THE BUBBLE GUN'S SERVO
-#define UN_TRIG_POSITION 180
-#define TRIG_POSITION 90
+#define UN_TRIG_POSITION 140
+#define TRIG_POSITION 75
 /*---------------------------------------
  * END SERVO
  ----------------------------------------*/
@@ -39,7 +40,7 @@
 #define TX_PIN 2
 
 //DEFINE THE DIMENSION OF THE TABLE FOR THE SONAR READING OPERATION
-#define NUMBEROFMISSREAD 2
+#define NUMBEROFMISSREAD 3
 
 //POSSIBLE STATE OF THE HISTORY PRESENCE TABLE
 #define STRONGFALSE 0
@@ -83,7 +84,7 @@ unsigned long ir_timer = 0, strongfalse_timer = 0, bubble_gun_timer = 0, detach_
    FLAG RELATED TO TIMER
   -----------------------------------------------------------------------------*/
 bool timer_flag = false, send_people_flag = false, send_no_people_flag = false;
-bool strongfalse_flag = true, bubble_gun_trig = false;
+bool strongfalse_flag = false, bubble_gun_trig = false;
 bool detach_bubble_gun_flag = false;
 
 //TABLE HISTORY OF PEOPLE PRESENCE
@@ -128,6 +129,7 @@ void setup() {
   //mp3 set volume
   mp3_set_volume (dfplayer_volume);
   mp3_play (DEFAULT_SONG);
+  un_trig_bubble_gun();
 
   //for test:
   //actual_state = PEOPLE_PRESENCE_STATE;
@@ -349,7 +351,7 @@ void trig_bubble_gun()
   trigger_bubble_gun.attach(BUBBLEGUN_SERVO_PIN);
   trigger_bubble_gun.write(TRIG_POSITION);
   //detach_bubble_gun_flag = true;
-  detach_bubble_gun_timer = millis();
+  //detach_bubble_gun_timer = millis();
 }
 
 //DEACTIVATE THE BUBBLE GUN BY MOVING THE SERVO TO A CERTAIN POSITION
