@@ -57,7 +57,7 @@
 //TIME THAT DEFINE FOR HOW MUCH TIME I WILL SEND A PEOPLE PACKET WITHOUT MODIFYING THE STATE
 #define UNCHECKED_SENDING_PEOPLE_TIME 5000
 //TIME THAT DEFINE FOR HOW MUCH I WILL SEND THE NO PEOPLE PACKET
-#define SENDING_NO_PEOPLE_TIME 1000
+#define SENDING_NO_PEOPLE_TIME 250
 
 #define PEOPLE_PACKET 0xE0E0906F
 #define NO_PEOPLE_PACKET 0xE0E0906A
@@ -70,6 +70,7 @@
 #define MAX_VOLUME 30
 #define DEFAULT_SONG 1
 #define PEOPLE_INVITATION 2
+#define NUMBER_OF_TRACK_INVITATION 4
 
 int i = 0;
 //SONAR READ VALUE
@@ -252,7 +253,7 @@ void bubble_gun_triggered_action()
 /*-------------------------------------------------------
  * PEOPLE SEEN ACTION
  --------------------------------------------------------*/
- 
+byte played_track = PEOPLE_INVITATION;
 void people_seen_action()
 {
   switch (presence_table_state)
@@ -265,7 +266,12 @@ void people_seen_action()
       if (expired_timer(people_seen_timer, PEOPLE_SEEN_TIME))
       {
         send_no_people_flag = false;
-        mp3_play (PEOPLE_INVITATION);
+        if(played_track >= (PEOPLE_INVITATION + NUMBER_OF_TRACK_INVITATION))
+          played_track = PEOPLE_INVITATION;
+        mp3_play (played_track);
+        mp3_single_loop (true);
+        played_track++;
+        Serial.println("Playing " + played_track);
         actual_state = PEOPLE_PRESENCE_STATE;        
         sending_people_timer = millis();
       }
@@ -295,6 +301,7 @@ void people_presence_action()
           send_no_people_flag = true;
           sending_no_people_timer = millis();
           mp3_play (DEFAULT_SONG);
+          mp3_single_loop (true);
           actual_state = NO_PEOPLE_STATE;
           break;
     }
